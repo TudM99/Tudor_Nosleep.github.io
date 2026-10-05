@@ -1,325 +1,631 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tudor's Nosleep Zone</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #f7cdcf; /* Default to inactive color */
-            color: #343a40;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            transition: background-color 0.5s ease;
-        }
-        
-        body.active {
-            background-color: #cdf7d9; /* Active color */
-        }
-        
-        .container {
-            max-width: 600px;
-            padding: 40px;
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
-        }
-        
-        h1 {
-            margin: 0 0 20px;
-            font-weight: 700;
-            font-size: 2.5rem;
-        }
-        
-        p {
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            color: #495057;
-            line-height: 1.6;
-        }
-        
-        .status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        
-        .status-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            margin-right: 10px;
-            background-color: #dee2e6;
-        }
-        
-        .status-indicator.active {
-            background-color: #20c997;
-            box-shadow: 0 0 12px rgba(32, 201, 151, 0.5);
-        }
-        
-        .status-text {
-            font-weight: 500;
-        }
-        
-        /* Switch style */
-        .switch-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            margin: 0 10px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #20c997;
-        }
-        
-        input:focus + .slider {
-            box-shadow: 0 0 1px #20c997;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
-        .switch-label {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-        
-        .time-active {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
-        .dark-mode {
-            color: #f8f9fa;
-        }
-        
-        .dark-mode .container {
-            background-color: #343a40;
-        }
-        
-        .dark-mode p {
-            color: #dee2e6;
-        }
-        
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #495057;
-            cursor: pointer;
-            font-size: 1.5rem;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.2s ease;
-        }
-        
-        .theme-toggle:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-        
-        .dark-mode .theme-toggle {
-            color: #e9ecef;
-        }
-        
-        .dark-mode .theme-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tudor's Nosleep Zone</title>
+<style>
+  :root{
+    --bg:#0e1116;
+    --grid:rgba(120,135,160,.055);
+    --edge:rgba(130,145,168,.22);
+    --text:#e6eaf0;
+    --muted:#8b94a3;
+    --panel:rgba(18,22,29,.72);
+    --panel-brd:rgba(255,255,255,.08);
+    --accent:#34d399;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',sans-serif;
+    overflow:hidden;-webkit-font-smoothing:antialiased}
+  #stage{position:fixed;inset:0;display:block}
+
+  /* ---- control panel ---- */
+  #panel{
+    position:fixed;left:18px;bottom:18px;z-index:10;
+    bottom:calc(18px + env(safe-area-inset-bottom,0px));
+    width:272px;padding:16px 18px 15px;
+    background:var(--panel);border:1px solid var(--panel-brd);
+    border-radius:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 10px 40px rgba(0,0,0,.45);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  body.idle #panel{opacity:0;transform:translateY(8px);pointer-events:none}
+  body.idle{cursor:none}
+  #panel h1{margin:0 0 2px;font-size:15px;font-weight:650;letter-spacing:.2px}
+  #panel .sub{margin:0 0 14px;font-size:11.5px;line-height:1.45;color:var(--muted)}
+
+  .row{display:flex;align-items:center;gap:10px}
+  .status{margin-bottom:14px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#434b57;flex:0 0 auto;transition:.3s}
+  .dot.on{background:var(--accent);box-shadow:0 0 10px rgba(52,211,153,.7)}
+  .status-text{font-size:12.5px;color:#c7cdd6}
+
+  .switch{position:relative;display:inline-block;width:46px;height:26px;flex:0 0 auto}
+  .switch input{opacity:0;width:0;height:0}
+  .slider{position:absolute;inset:0;background:#2a313c;border-radius:26px;cursor:pointer;transition:.25s}
+  .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;
+    background:#fff;border-radius:50%;transition:.25s}
+  input:checked + .slider{background:var(--accent)}
+  input:checked + .slider:before{transform:translateX(20px)}
+  .switch-label{font-size:12.5px;color:#c7cdd6}
+
+  .timer{margin-top:13px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  #fs{position:fixed;top:16px;right:16px;z-index:10;
+    top:calc(16px + env(safe-area-inset-top,0px));
+    width:38px;height:38px;border-radius:10px;cursor:pointer;
+    background:var(--panel);border:1px solid var(--panel-brd);color:#c7cdd6;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    display:flex;align-items:center;justify-content:center;transition:opacity .4s ease,background .2s}
+  #fs:hover{background:rgba(40,46,56,.8)}
+  body.idle #fs{opacity:0;pointer-events:none}
+  #fs svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">☾</button>
-    <div class="container">
-        <h1>Tudor's Nosleep Zone</h1>
-        <p>In caz ca nu merg / sunt blocate site-urile normale de no-screen-sleep.</p>
-        
-        <div class="status">
-            <div class="status-indicator" id="statusIndicator"></div>
-            <span class="status-text" id="statusText">Screen sleep: enabled</span>
-        </div>
-        
-        <div class="switch-container">
-            <span class="switch-label">Off</span>
-            <label class="switch">
-                <input type="checkbox" id="toggleSwitch">
-                <span class="slider"></span>
-            </label>
-            <span class="switch-label">On</span>
-        </div>
-        
-        <div class="time-active" id="timeActive"></div>
-    </div>
+  <canvas id="stage"></canvas>
 
-    <script>
-        // Check if the Wake Lock API is supported
-        let wakeLock = null;
-        let startTime = null;
-        let timerInterval = null;
-        const toggleSwitch = document.getElementById('toggleSwitch');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
-        const timeActive = document.getElementById('timeActive');
-        const themeToggle = document.getElementById('themeToggle');
-        
-        // Check if the browser supports the Wake Lock API
-        if ('wakeLock' in navigator) {
-            toggleSwitch.addEventListener('change', toggleWakeLock);
-        } else {
-            toggleSwitch.disabled = true;
-            statusText.textContent = 'Wake Lock API not supported in this browser';
-        }
-        
-        // Theme toggle functionality
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀' : '☾';
-        });
-        
-        // Function to request a wake lock
-        async function requestWakeLock() {
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                
-                document.body.classList.add('active');
-                statusIndicator.classList.add('active');
-                statusText.textContent = 'Screen sleep: disabled';
-                
-                startTime = new Date();
-                updateTimer();
-                timerInterval = setInterval(updateTimer, 1000);
-                
-                wakeLock.addEventListener('release', () => {
-                    handleWakeLockRelease();
-                });
-                
-                // Listen for page visibility changes
-                document.addEventListener('visibilitychange', handleVisibilityChange);
-            } catch (err) {
-                console.error(`Failed to request wake lock: ${err.message}`);
-                statusText.textContent = `Error: ${err.message}`;
-                toggleSwitch.checked = false;
-                document.body.classList.remove('active');
-            }
-        }
-        
-        // Function to release wake lock
-        function releaseWakeLock() {
-            if (wakeLock) {
-                wakeLock.release()
-                    .then(() => {
-                        handleWakeLockRelease();
-                    });
-            }
-        }
-        
-        // Function to handle wake lock release
-        function handleWakeLockRelease() {
-            wakeLock = null;
-            document.body.classList.remove('active');
-            statusIndicator.classList.remove('active');
-            statusText.textContent = 'Screen sleep: enabled';
-            
-            clearInterval(timerInterval);
-            startTime = null;
-            timeActive.textContent = '';
-            
-            // Uncheck the switch without triggering the event
-            toggleSwitch.checked = false;
-            
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        }
-        
-        // Function to toggle wake lock on/off
-        async function toggleWakeLock() {
-            if (toggleSwitch.checked) {
-                await requestWakeLock();
-            } else {
-                releaseWakeLock();
-            }
-        }
-        
-        // Function to handle visibility changes
-        async function handleVisibilityChange() {
-            if (document.visibilityState === 'hidden') {
-                // Page is hidden, background color should change
-                document.body.classList.remove('active');
-            } else if (document.visibilityState === 'visible' && toggleSwitch.checked) {
-                // Page is visible again and switch is on
-                document.body.classList.add('active');
-                
-                // Re-request the wake lock when the page becomes visible again
-                if (!wakeLock) {
-                    await requestWakeLock();
-                }
-            }
-        }
-        
-        // Function to update the timer display
-        function updateTimer() {
-            if (startTime) {
-                const now = new Date();
-                const diff = now - startTime;
-                
-                const hours = Math.floor(diff / 3600000);
-                const minutes = Math.floor((diff % 3600000) / 60000);
-                const seconds = Math.floor((diff % 60000) / 1000);
-                
-                timeActive.textContent = `Screen kept awake for: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-        }
-    </script>
+  <button id="fs" title="Fullscreen (F)">
+    <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  </button>
+
+  <div id="panel">
+    <h1>Tudor's Nosleep Zone</h1>
+    <p class="sub">Keeps the screen awake. În caz că nu merg / sunt blocate site-urile normale de no-screen-sleep.</p>
+    <div class="row status">
+      <span class="dot" id="dot"></span>
+      <span class="status-text" id="statusText">Screen sleep: enabled</span>
+    </div>
+    <div class="row">
+      <label class="switch">
+        <input type="checkbox" id="toggle">
+        <span class="slider"></span>
+      </label>
+      <span class="switch-label" id="toggleLabel">Keep awake</span>
+    </div>
+    <div class="timer" id="timer"></div>
+  </div>
+
+<script>
+"use strict";
+/* =========================================================================
+   1. GENERATIVE TINES-STORY CANVAS
+   -------------------------------------------------------------------------
+   Not a looped animation. Stories are *generated* from a grammar:
+     - node types follow weighted transition rules (a tiny Markov model),
+     - titles are templated to match each type,
+     - several independent chains grow / branch / light up / dissolve at
+       jittered intervals, so the composition never repeats.
+   ========================================================================= */
+
+const cv = document.getElementById('stage');
+const ctx = cv.getContext('2d');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- type definitions (labels + accents mirror the real Tines canvas) ---- */
+const TYPES = {
+  webhook:   { label:'Webhook',         accent:'#34d399' },
+  transform: { label:'Event Transform', accent:'#f59e42' },
+  condition: { label:'Condition',       accent:'#4ade80' },
+  http:      { label:'HTTP Request',    accent:'#38bdf8' },
+  case:      { label:'Case',            accent:'#a78bfa' },
+  slack:     { label:'Slack',           accent:'#e255a1' },
+  record:    { label:'Record',          accent:'#94a3b8' },
+  graph:     { label:'Microsoft Graph', accent:'#60a5fa' },
+};
+
+/* ---- weighted "what tends to follow what" (the controlled part) ---- */
+const NEXT = {
+  webhook:   [['transform',.55],['condition',.30],['http',.15]],
+  transform: [['condition',.40],['transform',.22],['http',.22],['case',.10],['slack',.06]],
+  condition: [['case',.24],['http',.24],['slack',.20],['transform',.22],['graph',.10]],
+  http:      [['transform',.42],['condition',.24],['http',.14],['case',.10],['slack',.06],['graph',.04]],
+  graph:     [['condition',.50],['http',.30],['transform',.20]],
+  case:      [['slack',.50],['http',.24],['record',.16],['transform',.10]],
+  slack:     [['slack',.28],['http',.20],['TERMINAL',.52]],
+  record:    [['TERMINAL',1]],
+};
+
+/* ---- title vocabulary ---- */
+const OBJ = ['Case','Alert','IOC Table','Case Fields','Case Details','Alert Details',
+  'Case IOCs','Timeline','Timeline Section','Discussion','Status','Label','Items',
+  'Chat Items','Actor Groups','Severity','Full Event','Corporate Credential',
+  'Password Reset','External User','Manual Review','Entra User','Tines Case',
+  'Escalation','Audit Log','Flare Alerts','Chat Alert','Chat Thread','Driller Log',
+  'Benign Pattern','Closure Code','IOCs','Threat Intel','Sandbox Report','Hash',
+  'Domain','Enrichment','Playbook','Ticket','Incident','Observable','Detection','Signal'];
+const COND = ['Escalated','Low Severity','High Severity','Known Benign','External User',
+  'Corporate Credential','Active','Resolved','Closed','Driller Log','Malicious','First Seen'];
+
+const T = {
+  webhook:  o=>pick(['Receive '+o+' Alerts','On New '+o,o+' Webhook',o+' Update Receiver','Incoming '+o]),
+  transform:o=>pick(['Build ','Deduplicate ','Explode ','Group ','Map ','Prepare ','Extract ','Parse ','Enrich ','Format '])+o,
+  condition:()=>pick(['Is '+pick(COND),'Is Not '+pick(COND),'Has '+pick(OBJ),pick(OBJ)+' Found',pick(OBJ)+' Exists','Filter '+pick(OBJ)]),
+  http:     o=>pick(['Get ','Find ','Update ','Check ','Lookup ','Query ','Fetch '])+o,
+  case:     ()=>pick(['Create '+pick(OBJ)+' Case','Create Manual Review Case','Create Auto-Closed Case','Create '+pick(OBJ)+' Case (Closed)']),
+  slack:    o=>pick(['Send '+o+' Slack','Send '+o+' Slack - Audit','Send Escalation Slack','Send Auto-Close Slack']),
+  record:   o=>pick(['Save '+o,'Save '+o+' TS','Record '+o]),
+  graph:    ()=>pick(['Check User in Entra','Get Password Change Time','Get '+pick(OBJ)+' (Graph)']),
+};
+function makeTitle(type){ return T[type](pick(OBJ)); }
+
+/* ---- utils ---- */
+function rand(a,b){return a+Math.random()*(b-a)}
+function randInt(a,b){return Math.floor(rand(a,b+1))}
+function pick(a){return a[(Math.random()*a.length)|0]}
+function clamp(v,a,b){return v<a?a:v>b?b:v}
+function lerp(a,b,t){return a+(b-a)*t}
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function wpick(list){ // weighted pick of [value,weight]
+  let s=0; for(const [,w] of list) s+=w;
+  let r=Math.random()*s;
+  for(const [v,w] of list){ r-=w; if(r<=0) return v; }
+  return list[list.length-1][0];
+}
+function hexA(hex,a){
+  const n=parseInt(hex.slice(1),16);
+  return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;
+}
+
+/* ---- world ---- */
+let W=0,H=0,DPR=1;
+let nodeW=192, nodeH=46, rowGap=82, laneW=270;
+let maxChains=4, maxDepth=6, topMargin=70;
+const MAX_NODES=120, MAX_EVENTS=6;
+
+let nodes=[];        // all nodes
+let chains=[];       // {id,lane,state,rootId,born,complete,dwell,dieStart}
+let events=[];       // travelling "event" pulses
+let cam={x:0,y:0};
+let uid=0;
+
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  cv.width=W*DPR; cv.height=H*DPR;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const small=W<620;
+  nodeW=small?150:192; nodeH=small?40:46;
+  rowGap=nodeH+36; laneW=nodeW+(small?52:78);
+  maxChains=clamp(Math.floor(W/laneW),2,6);
+  maxDepth=clamp(Math.floor((H-topMargin-60)/rowGap),3,8);
+}
+
+/* ---- layout helpers ---- */
+function laneBounds(lane){
+  const total=maxChains*laneW, start=(W-total)/2;
+  const cx=start+lane*laneW+laneW/2;
+  return {cx, left:cx-laneW/2+nodeW/2+8, right:cx+laneW/2-nodeW/2-8};
+}
+function freeLane(){
+  const used=new Set(chains.filter(c=>c.state!=='dying').map(c=>c.lane));
+  const open=[];
+  for(let i=0;i<maxChains;i++) if(!used.has(i)) open.push(i);
+  return open.length?pick(open):-1;
+}
+
+/* ---- node + chain creation ---- */
+function newNode(type,cx,y,depth,chainId){
+  let maxKids = type==='condition' ? (Math.random()<0.65?2:1)
+            : type==='record' ? 0 : 1;
+  const n={
+    id:++uid, type, chainId, depth,
+    label:TYPES[type].label, accent:TYPES[type].accent,
+    title:makeTitle(type), nextTitle:null, titleFade:0,
+    cx, y, w:nodeW, h:nodeH,
+    badge:randInt(1,9), maxKids, kids:[], parent:null,
+    appear:0, pulse:0, alpha:1,
+  };
+  nodes.push(n);
+  return n;
+}
+function spawnChain(){
+  const lane=freeLane(); if(lane===-1) return;
+  const {cx}=laneBounds(lane);
+  const type = Math.random()<0.78 ? 'webhook' : pick(['transform','condition']);
+  const root=newNode(type, cx+rand(-10,10), topMargin, 0, ++uid);
+  root.badge=randInt(12,480);               // triggers show bigger event counts
+  chains.push({id:root.chainId, lane, state:'growing', rootId:root.id,
+    born:performance.now(), complete:0, dwell:rand(7000,15000), dieStart:0});
+}
+
+function growable(ch){
+  return nodes.filter(n=>n.chainId===ch.id && n.appear>=1 &&
+    n.depth<maxDepth && n.kids.length<n.maxKids);
+}
+function growNode(parent){
+  const type=wpick(NEXT[parent.type]);
+  if(type==='TERMINAL'){ parent.maxKids=parent.kids.length; return; }
+  const b=laneBounds(chains.find(c=>c.id===parent.chainId).lane);
+  const slot=parent.kids.length;
+  let cx;
+  if(parent.maxKids>1){                     // condition → spread branches
+    const off=Math.min(laneW*0.40, nodeW*0.62)*(1-parent.depth*0.06);
+    cx=parent.cx + (slot===0?-off:off);
+  }else{
+    cx=parent.cx + rand(-8,8);
+  }
+  cx=clamp(cx,b.left,b.right);
+  const child=newNode(type, cx, parent.y+rowGap, parent.depth+1, parent.chainId);
+  child.parent=parent.id;
+  child.dashed=Math.random()<0.22;          // some links render dashed, like Tines refs
+  parent.kids.push(child.id);
+}
+
+/* ---- modifications (the "constantly edited" feel) ---- */
+function modify(){
+  const live=nodes.filter(n=>n.appear>=1 && n.alpha>=1);
+  if(!live.length) return;
+  const n=pick(live);
+  const roll=Math.random();
+  if(roll<0.45){ n.badge++; n.pulse=1; }                 // an event ran through it
+  else if(roll<0.72){ n.pulse=1; }                       // just a run-pulse
+  else { n.nextTitle=makeTitle(n.type); n.titleFade=1; n.pulse=0.6; } // re-edited
+}
+
+/* ---- travelling "event" that lights a path root→leaf ---- */
+function emitEvent(){
+  if(events.length>=MAX_EVENTS) return;
+  const roots=chains.filter(c=>c.state!=='dying').map(c=>nodes.find(n=>n.id===c.rootId)).filter(Boolean);
+  if(!roots.length) return;
+  let n=pick(roots); const path=[n];
+  while(n && n.kids.length){
+    const nx=nodes.find(m=>m.id===pick(n.kids));
+    if(!nx||nx.appear<1) break;
+    path.push(nx); n=nx;
+  }
+  if(path.length<2) return;
+  events.push({path, seg:0, t:0, speed:rand(1.1,1.8), color:path[path.length-1].accent});
+}
+
+/* ---- bezier between a parent (bottom) and child (top) ---- */
+function edgePts(a,b){
+  const p0={x:a.cx,y:a.y+a.h}, p3={x:b.cx,y:b.y};
+  const k=(p3.y-p0.y)*0.5;
+  return [p0,{x:p0.x,y:p0.y+k},{x:p3.x,y:p3.y-k},p3];
+}
+function bez(p,t){
+  const u=1-t, a=u*u*u,b=3*u*u*t,c=3*u*t*t,d=t*t*t;
+  return {x:a*p[0].x+b*p[1].x+c*p[2].x+d*p[3].x,
+          y:a*p[0].y+b*p[1].y+c*p[2].y+d*p[3].y};
+}
+
+/* ---- schedulers (jittered timers, never on a fixed beat) ---- */
+const timers={grow:0,chain:0,mod:0,flow:0};
+const every={
+  grow:()=>rand(reduceMotion?900:450, reduceMotion?1600:1050),
+  chain:()=>rand(2600,5200),
+  mod:()=>rand(reduceMotion?1600:700, reduceMotion?3200:1600),
+  flow:()=>rand(reduceMotion?1600:520, reduceMotion?3200:1200),
+};
+let due={grow:every.grow(),chain:every.chain(),mod:every.mod(),flow:every.flow()};
+
+function schedule(dt){
+  for(const k in timers){
+    timers[k]+=dt;
+    if(timers[k]>=due[k]){
+      timers[k]=0; due[k]=every[k]();
+      if(k==='grow'){
+        const gc=chains.filter(c=>c.state==='growing');
+        if(gc.length){ const ch=pick(gc); const g=growable(ch); if(g.length) growNode(pick(g)); }
+      }else if(k==='chain'){
+        if(chains.filter(c=>c.state!=='dying').length<maxChains) spawnChain();
+      }else if(k==='mod'){ modify(); }
+      else if(k==='flow'){ emitEvent(); }
+    }
+  }
+}
+
+/* ---- update ---- */
+function update(dt){
+  const now=performance.now();
+  const ds=dt/1000;
+
+  // camera: tiny idle wander so the frame is never dead-still
+  if(!reduceMotion){
+    const t=now/1000;
+    cam.x=Math.sin(t*0.05)*16 + Math.sin(t*0.017)*8;
+    cam.y=Math.cos(t*0.041)*12;
+  }
+
+  for(const n of nodes){
+    if(n.appear<1) n.appear=Math.min(1,n.appear+ds*3.2);
+    if(n.pulse>0) n.pulse=Math.max(0,n.pulse-ds*1.6);
+    if(n.titleFade>0){
+      n.titleFade-=ds*2;
+      if(n.titleFade<=0.5 && n.nextTitle){ n.title=n.nextTitle; n.nextTitle=null; }
+      if(n.titleFade<0) n.titleFade=0;
+    }
+  }
+
+  // event pulses walk the path, lighting each node on arrival
+  for(const e of events){
+    const a=e.path[e.seg], b=e.path[e.seg+1];
+    if(!a||!b){ e.dead=true; continue; }
+    const pts=edgePts(a,b);
+    const len=Math.hypot(pts[3].x-pts[0].x,pts[3].y-pts[0].y)*1.15;
+    e.t += (e.speed*160*ds)/Math.max(len,1);
+    if(e.t>=1){ e.t=0; e.seg++; const nx=e.path[e.seg]; if(nx) nx.pulse=Math.max(nx.pulse,0.9);
+      if(e.seg>=e.path.length-1) e.dead=true; }
+  }
+  events=events.filter(e=>!e.dead);
+
+  // chain lifecycle: grow → complete → dwell → dissolve
+  for(const ch of chains){
+    if(ch.state==='growing'){
+      if(now-ch.born>2500 && growable(ch).length===0){ ch.state='complete'; ch.complete=now; }
+    }else if(ch.state==='complete'){
+      if(now-ch.complete>ch.dwell){ ch.state='dying'; ch.dieStart=now; }
+    }else if(ch.state==='dying'){
+      const p=(now-ch.dieStart)/1200;
+      const a=clamp(1-p,0,1);
+      for(const n of nodes) if(n.chainId===ch.id) n.alpha=a;
+      if(p>=1) ch.remove=true;
+    }
+  }
+  // safety cap → retire oldest living chain
+  if(nodes.length>MAX_NODES){
+    const old=chains.filter(c=>c.state!=='dying').sort((a,b)=>a.born-b.born)[0];
+    if(old){ old.state='dying'; old.dieStart=now; }
+  }
+  const gone=new Set(chains.filter(c=>c.remove).map(c=>c.id));
+  if(gone.size){
+    nodes=nodes.filter(n=>!gone.has(n.chainId));
+    chains=chains.filter(c=>!c.remove);
+    events=events.filter(e=>e.path.every(n=>!gone.has(n.chainId)));
+  }
+}
+
+/* ---- draw ---- */
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function glyph(type,x,y,s){ // tiny white icon inside the accent chip
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.strokeStyle='#fff'; ctx.fillStyle='#fff';
+  ctx.lineWidth=1.4; ctx.lineCap='round'; ctx.lineJoin='round';
+  const h=s/2;
+  switch(type){
+    case 'webhook': ctx.beginPath();ctx.moveTo(h*.3,-h);ctx.lineTo(-h*.4,h*.2);ctx.lineTo(h*.05,h*.2);ctx.lineTo(-h*.3,h);ctx.lineTo(h*.5,-h*.1);ctx.lineTo(0,-h*.1);ctx.closePath();ctx.fill();break;
+    case 'transform': ctx.beginPath();ctx.moveTo(-h*.1,-h);ctx.lineTo(-h*.7,-h);ctx.lineTo(-h*.7,h);ctx.moveTo(h*.1,h);ctx.lineTo(h*.7,h);ctx.lineTo(h*.7,-h);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(-h*.7,-h*.2);ctx.lineTo(-h*.3,-h*.6);ctx.moveTo(-h*.7,-h*.2);ctx.lineTo(-h*.3,h*.2);ctx.moveTo(h*.7,h*.2);ctx.lineTo(h*.3,h*.6);ctx.moveTo(h*.7,h*.2);ctx.lineTo(h*.3,-h*.2);ctx.stroke();break;
+    case 'condition': ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,-h*.1);ctx.lineTo(-h*.7,-h);ctx.moveTo(0,-h*.1);ctx.lineTo(h*.7,-h);ctx.stroke();
+      [[-h*.7,-h],[h*.7,-h],[0,h]].forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],1.5,0,7);ctx.fill();});break;
+    case 'http': ctx.beginPath();ctx.arc(0,0,h*.85,0,7);ctx.stroke();ctx.beginPath();ctx.ellipse(0,0,h*.35,h*.85,0,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(-h*.8,0);ctx.lineTo(h*.8,0);ctx.stroke();break;
+    case 'slack': ctx.beginPath();ctx.moveTo(-h*.5,-h*.5);ctx.lineTo(-h*.7,h*.5);ctx.moveTo(h*.3,-h*.5);ctx.lineTo(h*.1,h*.5);ctx.moveTo(-h*.8,-h*.1);ctx.lineTo(h*.6,-h*.1);ctx.moveTo(-h*.9,h*.35);ctx.lineTo(h*.5,h*.35);ctx.stroke();break;
+    case 'case': ctx.beginPath();ctx.moveTo(-h*.8,-h*.3);ctx.lineTo(-h*.8,h*.7);ctx.lineTo(h*.8,h*.7);ctx.lineTo(h*.8,-h*.5);ctx.lineTo(0,-h*.5);ctx.lineTo(-h*.25,-h*.75);ctx.lineTo(-h*.8,-h*.75);ctx.closePath();ctx.stroke();break;
+    case 'record': ctx.beginPath();ctx.ellipse(0,-h*.5,h*.75,h*.3,0,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(-h*.75,-h*.5);ctx.lineTo(-h*.75,h*.5);ctx.moveTo(h*.75,-h*.5);ctx.lineTo(h*.75,h*.5);ctx.stroke();ctx.beginPath();ctx.ellipse(0,h*.5,h*.75,h*.3,0,0,Math.PI);ctx.stroke();break;
+    case 'graph': [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(p=>{ctx.fillRect(p[0]*h*.55-2.2,p[1]*h*.55-2.2,4.4,4.4);});break;
+  }
+  ctx.restore();
+}
+
+function drawNode(n){
+  const a=n.alpha*easeOut(n.appear);
+  if(a<=0.01) return;
+  const x=n.cx-n.w/2, y=n.y;
+  ctx.save();
+  ctx.globalAlpha=a;
+  if(n.appear<1) ctx.translate(0,(1-easeOut(n.appear))*8);
+
+  // run / modify pulse ring
+  if(n.pulse>0){
+    const pr=(1-n.pulse);
+    ctx.save();
+    ctx.globalAlpha=a*n.pulse*0.5;
+    ctx.strokeStyle=n.accent; ctx.lineWidth=2;
+    roundRect(x-pr*10, y-pr*10, n.w+pr*20, n.h+pr*20, 12+pr*8);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // card
+  roundRect(x,y,n.w,n.h,11);
+  ctx.fillStyle='#161b22';
+  ctx.fill();
+  roundRect(x,y,n.w,n.h,11);
+  ctx.strokeStyle=hexA(n.accent, 0.35 + n.pulse*0.4);
+  ctx.lineWidth=1.2; ctx.stroke();
+  // top sheen
+  ctx.save();ctx.clip();
+  const g=ctx.createLinearGradient(0,y,0,y+n.h);
+  g.addColorStop(0,'rgba(255,255,255,.05)');g.addColorStop(.4,'rgba(255,255,255,0)');
+  ctx.fillStyle=g;ctx.fillRect(x,y,n.w,n.h);ctx.restore();
+
+  // icon chip
+  const cs=n.h-16, ciy=y+8;
+  roundRect(x+9, ciy, cs, cs, 7);
+  ctx.fillStyle=n.accent; ctx.fill();
+  glyph(n.type, x+9+cs/2, ciy+cs/2, cs*0.62);
+
+  // text
+  const tx=x+9+cs+10, maxTw=n.w-(cs+54);
+  ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#7f8794';
+  ctx.font='600 9.5px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.fillText(n.label.toUpperCase(), tx, y+18);
+
+  ctx.fillStyle='#e6eaf0';
+  ctx.font='650 12.5px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.globalAlpha=a*(n.titleFade>0?Math.abs(n.titleFade-0.5)*2:1);
+  let title=n.title;
+  if(ctx.measureText(title).width>maxTw){
+    while(title.length>4 && ctx.measureText(title+'…').width>maxTw) title=title.slice(0,-1);
+    title+='…';
+  }
+  ctx.fillText(title, tx, y+33);
+  ctx.globalAlpha=a;
+
+  // badge
+  const bx=x+n.w-15, by=y+15;
+  ctx.beginPath();ctx.arc(bx,by,10,0,7);
+  ctx.fillStyle=n.accent;ctx.fill();
+  ctx.fillStyle='#0e1116';
+  ctx.font='700 9px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(String(n.badge), bx, by+0.5);
+  ctx.textAlign='left';
+  ctx.restore();
+}
+
+function drawGrid(){
+  const s=30, ox=((cam.x%s)+s)%s, oy=((cam.y%s)+s)%s;
+  ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--grid')||'rgba(120,135,160,.05)';
+  for(let x=ox-s;x<W+s;x+=s) for(let y=oy-s;y<H+s;y+=s){
+    ctx.beginPath();ctx.arc(x,y,1,0,7);ctx.fill();
+  }
+}
+
+function render(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+  // subtle radial vignette glow
+  const rg=ctx.createRadialGradient(W/2,H*0.42,0,W/2,H*0.42,Math.max(W,H)*0.7);
+  rg.addColorStop(0,'rgba(40,52,74,.25)');rg.addColorStop(1,'rgba(14,17,22,0)');
+  ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.translate(cam.x,cam.y);
+  drawGrid();
+
+  // edges
+  for(const n of nodes){
+    if(n.parent==null) continue;
+    const p=nodes.find(m=>m.id===n.parent); if(!p) continue;
+    const a=Math.min(n.alpha,p.alpha)*easeOut(n.appear);
+    if(a<=0.01) continue;
+    const pts=edgePts(p,n);
+    ctx.save();ctx.globalAlpha=a;
+    ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+    ctx.bezierCurveTo(pts[1].x,pts[1].y,pts[2].x,pts[2].y,pts[3].x,pts[3].y);
+    if(n.dashed){ ctx.setLineDash([5,5]); ctx.strokeStyle=hexA(n.accent,.4); }
+    else { ctx.setLineDash([]); ctx.strokeStyle='rgba(130,145,168,.22)'; }
+    ctx.lineWidth=1.4;ctx.stroke();ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // travelling event dots
+  for(const e of events){
+    const a=e.path[e.seg], b=e.path[e.seg+1]; if(!a||!b) continue;
+    const pts=edgePts(a,b), pos=bez(pts,e.t);
+    for(let i=0;i<4;i++){ // short glowing trail
+      const tt=clamp(e.t-i*0.05,0,1), pp=bez(pts,tt);
+      ctx.beginPath();ctx.arc(pp.x,pp.y,4-i*0.8,0,7);
+      ctx.fillStyle=hexA(e.color,(0.9-i*0.2));ctx.fill();
+    }
+    ctx.save();ctx.shadowColor=e.color;ctx.shadowBlur=10;
+    ctx.beginPath();ctx.arc(pos.x,pos.y,3,0,7);ctx.fillStyle=e.color;ctx.fill();ctx.restore();
+  }
+
+  for(const n of nodes) drawNode(n);
+  ctx.restore();
+}
+
+/* ---- main loop (pauses when tab hidden) ---- */
+let last=performance.now(), running=true;
+function loop(t){
+  const dt=Math.min(t-last,50); last=t;
+  if(running){ schedule(dt); update(dt); render(); }
+  requestAnimationFrame(loop);
+}
+
+/* ---- boot ---- */
+window.addEventListener('resize',()=>{ resize(); });
+resize();
+spawnChain();                               // seed the first story immediately
+for(let i=0;i<2;i++) setTimeout(spawnChain, 900+i*1400);
+requestAnimationFrame(loop);
+
+document.addEventListener('visibilitychange',()=>{
+  running = document.visibilityState==='visible';
+  last=performance.now();
+});
+
+/* =========================================================================
+   2. WAKE LOCK  (native Screen Wake Lock API + visibility re-acquire)
+   ========================================================================= */
+let wakeLock=null, startTime=null, timerInt=null, wantLock=true;
+const toggle=document.getElementById('toggle');
+const dot=document.getElementById('dot');
+const statusText=document.getElementById('statusText');
+const timerEl=document.getElementById('timer');
+const supported='wakeLock' in navigator;
+
+function setActiveUI(on){
+  dot.classList.toggle('on',on);
+  statusText.textContent = on ? 'Screen sleep: disabled' : 'Screen sleep: enabled';
+}
+function startTimer(){ startTime=Date.now(); tick(); timerInt=setInterval(tick,1000); }
+function stopTimer(){ clearInterval(timerInt); startTime=null; timerEl.textContent=''; }
+function tick(){
+  if(!startTime) return;
+  const d=Date.now()-startTime, p=n=>String(n).padStart(2,'0');
+  timerEl.textContent=`Awake for ${p(Math.floor(d/3.6e6))}:${p(Math.floor(d%3.6e6/6e4))}:${p(Math.floor(d%6e4/1e3))}`;
+}
+async function acquire(){
+  if(!supported||!wantLock||wakeLock) return;
+  try{
+    wakeLock=await navigator.wakeLock.request('screen');
+    setActiveUI(true); if(!startTime) startTimer();
+    wakeLock.addEventListener('release',()=>{ wakeLock=null; if(wantLock) setActiveUI(false); });
+  }catch(err){ statusText.textContent='Wake Lock: '+err.message; }
+}
+async function release(){
+  wantLock=false;
+  if(wakeLock){ try{ await wakeLock.release(); }catch{} wakeLock=null; }
+  setActiveUI(false); stopTimer();
+}
+
+if(!supported){
+  toggle.disabled=true;
+  statusText.textContent='Wake Lock API not supported here';
+}else{
+  toggle.checked=true;
+  toggle.addEventListener('change',()=>{
+    if(toggle.checked){ wantLock=true; acquire(); } else { release(); }
+  });
+  // re-acquire when returning to the tab
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && wantLock && !wakeLock) acquire();
+  });
+  // try immediately; if the browser needs a gesture, grab it on first interaction
+  acquire();
+  const onGesture=()=>{ if(wantLock && !wakeLock) acquire(); };
+  ['pointerdown','keydown'].forEach(e=>window.addEventListener(e,onGesture,{once:false}));
+}
+
+/* =========================================================================
+   3. UI: auto-hide panel + fullscreen
+   ========================================================================= */
+let idleT;
+function wake(){
+  document.body.classList.remove('idle');
+  clearTimeout(idleT);
+  idleT=setTimeout(()=>document.body.classList.add('idle'),3500);
+}
+['pointermove','pointerdown','keydown','touchstart'].forEach(e=>window.addEventListener(e,wake,{passive:true}));
+wake();
+
+const fsBtn=document.getElementById('fs');
+function toggleFs(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+fsBtn.addEventListener('click',toggleFs);
+window.addEventListener('keydown',e=>{ if(e.key==='f'||e.key==='F') toggleFs(); });
+</script>
 </body>
 </html>
